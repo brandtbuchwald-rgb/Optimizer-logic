@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EHT Gear Optimizer v4.0</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #2d1b4e 0%, #1a0f2e 100%);
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      color: #c4b5fd;
+      margin-bottom: 5px;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    .subtitle {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 0.85rem;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 500;
+    }
+    .section {
+      background: rgba(30, 30, 50, 0.6);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    .section h2 {
+      color: #c4b5fd;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .btn {
+      background: rgba(30, 30, 50, 0.8);
+      border: 2px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+      padding: 12px 20px;
+      color: #9ca3af;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: rgba(139, 92, 246, 0.5);
+      color: #e0e0e0;
+    }
+    .btn.active {
+      background: rgba(139, 92, 246, 0.3);
+      border-color: #8b5cf6;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+    .btn-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-group label {
+      color: #c4b5fd;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: block;
+    }
+    .input-with-suffix {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    input[type="number"], select {
+      background: rgba(20, 20, 40, 0.8);
+      border: 2px solid rgba(139, 92, 246, 0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+    .suffix {
+      color: #9ca3af;
+      font-size: 1rem;
+      font-weight: 600;
+      min-width: 30px;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(20, 20, 40, 0.6);
+      border: 2px solid rgba(139, 92, 246, 0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .checkbox-group:hover {
+      background: rgba(139, 92, 246, 0.1);
+      border-color: rgba(139, 92, 246, 0.5);
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #8b5cf6;
+    }
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+      flex: 1;
+      font-size: 0.9rem;
+    }
+    .optimize-btn {
+      background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 48px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: block;
+      margin: 30px auto;
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .optimize-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(139, 92, 246, 0.5);
+    }
+    .optimize-btn:active {
+      transform: translateY(0);
+    }
+    .collapsible {
+      background: rgba(20, 20, 40, 0.4);
+      border: 2px solid rgba(139, 92, 246, 0.25);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .collapsible-header {
+      padding: 14px 18px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #c4b5fd;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .collapsible-header:hover {
+      background: rgba(139, 92, 246, 0.1);
+    }
+    .collapsible-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding: 0 18px;
+    }
+    .collapsible-content.open {
+      max-height: 1000px;
+      padding: 0 18px 18px 18px;
+    }
+    .chevron {
+      transition: transform 0.3s;
+      color: #8b5cf6;
+    }
+    .chevron.open {
+      transform: rotate(180deg);
+    }
+    .buff-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .gear-slot {
+      background: rgba(20, 20, 35, 0.7);
+      border: 2px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 15px;
+    }
+    .gear-slot h3 {
+      color: #c4b5fd;
+      margin-bottom: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .stat-line {
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: #d0d0e0;
+      font-size: 0.9rem;
+    }
+    .stat-line:last-child { border-bottom: none; }
+    .stat-line.purple {
+      color: #c4b5fd;
+      font-weight: 600;
+      border-left: 3px solid #8b5cf6;
+      padding-left: 10px;
+      background: rgba(139, 92, 246, 0.1);
+      margin: 0 -10px 10px -10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+    .stat-line.cap { 
+      color: #6ee7b7; 
+      font-weight: 500;
+    }
+    .stat-line.cast {
+      color: #fbbf24;
+      font-weight: 600;
+      font-style: italic;
+      background: rgba(251, 191, 36, 0.1);
+      margin: 0 -10px 10px -10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .summary-item {
+      background: rgba(20, 20, 35, 0.7);
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      border: 2px solid rgba(139, 92, 246, 0.3);
+    }
+    .summary-label {
+      color: #9ca3af;
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .summary-value {
+      color: #c4b5fd;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .results { display: none; }
+    .results.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>EHT Gear Optimizer</h1>
+    <div class="subtitle">Rediscover ATK SPD Calculator RPG</div>
+
+```
+<div class="section">
+  <h2>Base & Buffs</h2>
+  
+  <div class="form-group">
+    <label>Class</label>
+    <div class="button-group">
+      <button class="btn active" onclick="selectClass('Berserker')">
+        <div class="btn-icon" style="background: #f59e0b;"></div>
+        Berserker
+      </button>
+      <button class="btn" onclick="selectClass('Paladin')">
+        <div class="btn-icon" style="background: #3b82f6;"></div>
+        Paladin
+      </button>
+      <button class="btn" onclick="selectClass('Ranger')">
+        <div class="btn-icon" style="background: #10b981;"></div>
+        Ranger
+      </button>
+      <button class="btn" onclick="selectClass('Sorcerer')">
+        <div class="btn-icon" style="background: #8b5cf6;"></div>
+        Sorcerer
+      </button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Focus</label>
+    <div class="button-group">
+      <button class="btn active" onclick="selectFocus('DPS')">
+        ⚔️ DPS
+      </button>
+      <button class="btn" onclick="selectFocus('Tank')">
+        🛡️ Tank
+      </button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Weapon Tier</label>
+    <div class="button-group">
+      <button class="btn" onclick="selectWeaponTier('Primal')">Primal</button>
+      <button class="btn active" onclick="selectWeaponTier('Original')">Original</button>
+      <button class="btn" onclick="selectWeaponTier('Chaos')">Chaos</button>
+      <button class="btn" onclick="selectWeaponTier('Abyss')">Abyss</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Weapon Category</label>
+    <div class="button-group">
+      <button class="btn active" onclick="selectWeaponCategory('Standard')">Standard</button>
+      <button class="btn" onclick="selectWeaponCategory('PvP')">PvP/Boss</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Gear Tier</label>
+    <div class="button-group">
+      <button class="btn" onclick="selectTier('Primal')">Primal</button>
+      <button class="btn" onclick="selectTier('Original')">Original</button>
+      <button class="btn active" onclick="selectTier('Chaos')">Chaos</button>
+      <button class="btn" onclick="selectTier('Abyss')">Abyss</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Characteristic</label>
+    <select id="characteristic">
+      <option value="Other">Other (0%)</option>
+      <option value="Swift">Swift (+10% ATK SPD)</option>
+      <option value="Heroic" selected>Heroic (+7% ATK SPD)</option>
+      <option value="Sharp">Sharp (+3% Crit)</option>
+      <option value="Nimble">Nimble (+3% Evasion)</option>
+      <option value="Thick">Thick Headed (-10% ATK SPD)</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>ATK SPD Color</label>
+    <select id="atkSpdColor">
+      <option value="0">White (0%)</option>
+      <option value="10">Blue (10%)</option>
+      <option value="20">Orange (20%)</option>
+      <option value="30" selected>Purple (30%)</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Quicken Level</label>
+    <div class="input-with-suffix">
+      <input type="number" id="quicken" min="0" max="5" value="0">
+      <span class="suffix">/ 5</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Pet Gear Rank</label>
+    <div class="button-group">
+      <button class="btn" onclick="selectPetRank('None')">None</button>
+      <button class="btn" onclick="selectPetRank('B')">B (6%)</button>
+      <button class="btn" onclick="selectPetRank('A')">A (9%)</button>
+      <button class="btn active" onclick="selectPetRank('S')">S (12%)</button>
+    </div>
+  </div>
+
+  <div class="checkbox-group" onclick="toggleFury()">
+    <input type="checkbox" id="furyEnabled">
+    <label>Enable Fury (+25% ATK SPD at Lv.10+)</label>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Guild & Research Buffs</h2>
+  
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span>Guild Buffs</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="collapsible-content open">
+      <div class="buff-grid">
+        <div class="form-group">
+          <label>ATK SPD</label>
+          <select id="guildAtkSpd">
+            <option value="0">0%</option>
+            <option value="5" selected>5%</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Crit</label>
+          <select id="guildCrit">
+            <option value="0">0%</option>
+            <option value="5" selected>5%</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span>Secret Tech</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="collapsible-content open">
+      <div class="buff-grid">
+        <div class="form-group">
+          <label>ATK SPD</label>
+          <select id="secretAtkSpd">
+            <option value="0">0%</option>
+            <option value="1">1%</option>
+            <option value="2">2%</option>
+            <option value="3">3%</option>
+            <option value="4">4%</option>
+            <option value="5">5%</option>
+            <option value="6">6%</option>
+            <option value="7">7%</option>
+            <option value="8">8%</option>
+            <option value="9">9%</option>
+            <option value="10" selected>10%</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Crit</label>
+          <select id="secretCrit">
+            <option value="0">0%</option>
+            <option value="1">1%</option>
+            <option value="2">2%</option>
+            <option value="3">3%</option>
+            <option value="4">4%</option>
+            <option value="5">5%</option>
+            <option value="6">6%</option>
+            <option value="7">7%</option>
+            <option value="8">8%</option>
+            <option value="9">9%</option>
+            <option value="10" selected>10%</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Evasion</label>
+          <select id="secretEvasion">
+            <option value="0" selected>0%</option>
+            <option value="1">1%</option>
+            <option value="2">2%</option>
+            <option value="3">3%</option>
+            <option value="4">4%</option>
+            <option value="5">5%</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span>Runes</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="collapsible-content open">
+      <div class="buff-grid">
+        <div class="form-group">
+          <label>ATK SPD</label>
+          <select id="runeAtkSpd">
+            <option value="0">0%</option>
+            <option value="1">1%</option>
+            <option value="2">2%</option>
+            <option value="3">3%</option>
+            <option value="4">4%</option>
+            <option value="5">5%</option>
+            <option value="6" selected>6%</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Crit</label>
+          <select id="runeCrit">
+            <option value="0">0%</option>
+            <option value="1">1%</option>
+            <option value="2">2%</option>
+            <option value="3">3%</option>
+            <option value="4">4%</option>
+            <option value="5">5%</option>
+            <option value="6" selected>6%</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Evasion</label>
+          <select id="runeEvasion">
+            <option value="0">0%</option>
+            <option value="1">1%</option>
+            <option value="2">2%</option>
+            <option value="3">3%</option>
+            <option value="4">4%</option>
+            <option value="5">5%</option>
+            <option value="6" selected>6%</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="optimize-btn" onclick="optimize()">⚡ Optimize Gear</button>
+
+<div id="results" class="results section">
+  <h2>Optimized Build</h2>
+  <div id="buildOutput"></div>
+  <div class="summary" id="summary"></div>
+</div>
+```
+
+  </div>
+
+  <script>
+    console.log('EHT Optimizer v4.0');
+
+    // State management
+    let selectedClass = 'Berserker';
+    let selectedFocus = 'DPS';
+    let selectedTier = 'Chaos';
+    let selectedWeaponTier = 'Original';
+    let selectedWeaponCategory = 'Standard';
+    let selectedPetRank = 'S';
+
+    // Button selection handlers
+    function selectClass(className) {
+      selectedClass = className;
+      updateButtonGroup('[onclick*="selectClass"]', className);
+    }
+
+    function selectFocus(focus) {
+      selectedFocus = focus;
+      updateButtonGroup('[onclick*="selectFocus"]', focus);
+    }
+
+    function selectTier(tier) {
+      selectedTier = tier;
+      updateButtonGroup('[onclick*="selectTier"]', tier);
+    }
+
+    function selectWeaponTier(tier) {
+      selectedWeaponTier = tier;
+      updateButtonGroup('[onclick*="selectWeaponTier"]', tier);
+    }
+
+    function selectWeaponCategory(category) {
+      selectedWeaponCategory = category;
+      updateButtonGroup('[onclick*="selectWeaponCategory"]', category);
+    }
+
+    function selectPetRank(rank) {
+      selectedPetRank = rank;
+      updateButtonGroup('[onclick*="selectPetRank"]', rank);
+    }
+
+    function updateButtonGroup(selector, value) {
+      const buttons = document.querySelectorAll(selector);
+      buttons.forEach(btn => {
+        const btnValue = btn.textContent.trim().split(/\s+/)[0];
+        btn.classList.toggle('active', btnValue === value || btn.textContent.includes(value));
+      });
+    }
+
+    function toggleFury() {
+      const checkbox = document.getElementById('furyEnabled');
+      checkbox.checked = !checkbox.checked;
+    }
+
+    function toggleCollapsible(header) {
+      const content = header.nextElementSibling;
+      const chevron = header.querySelector('.chevron');
+      content.classList.toggle('open');
+      chevron.classList.toggle('open');
+    }
+
+    const WEAPON_BASES = {
+      Original: { Berserker: 2.0, Paladin: 2.4, Ranger: 1.8, Sorcerer: 2.2 },
+      Primal: { Berserker: 2.0, Paladin: 2.4, Ranger: 1.8, Sorcerer: 2.2 },
+      Chaos: { Berserker: 2.0, Paladin: 2.4, Ranger: 1.8, Sorcerer: 2.2 },
+      Abyss: { Berserker: 2.0, Paladin: 2.4, Ranger: 1.8, Sorcerer: 2.2 },
+      'PVP/Boss': { Berserker: 2.2, Paladin: 2.5, Ranger: 2.0, Sorcerer: 2.3 }
+    };
+
+    const STAT_VALUES = {
+      Primal: { atkSpd: 12, crit: 12, evasion: 12, atk: 23, critDmg: 35, hp: 23, def: 23, dr: 17, racialDmg: 35 },
+      Original: { atkSpd: 12, crit: 12, evasion: 12, atk: 23, critDmg: 35, hp: 23, def: 23, dr: 17, racialDmg: 35 },
+      Chaos: { atkSpd: 14, crit: 14, evasion: 14, atk: 26, critDmg: 40, hp: 26, def: 26, dr: 19, racialDmg: 40 },
+      Abyss: { atkSpd: 16, crit: 16, evasion: 16, atk: 29, critDmg: 45, hp: 29, def: 29, dr: 21, racialDmg: 45 }
+    };
+
+    function getPetGearBonus(rank) {
+      return { None: 0, B: 6, A: 9, S: 12 }[rank] || 0;
+    }
+
+    function getCharacteristicBonus(char) {
+      const bonuses = {
+        Swift: { atkSpd: 10 },
+        Heroic: { atkSpd: 7 },
+        Sharp: { crit: 3 },
+        Nimble: { evasion: 3 },
+        Thick: { atkSpd: -10 }
+      };
+      return bonuses[char] || {};
+    }
+
+    function calculateRequiredAtkSpd() {
+      const classVal = selectedClass;
+      const weaponCategory = selectedWeaponCategory;
+      const weaponTier = selectedWeaponTier;
+      const quicken = parseInt(document.getElementById('quicken').value) || 0;
+      const furyEnabled = document.getElementById('furyEnabled').checked && classVal === 'Berserker';
+      
+      let weaponKey = weaponCategory === 'PvP' ? 'PVP/Boss' : weaponTier;
+      const baseInterval = WEAPON_BASES[weaponKey][classVal];
+      const quickenReduction = quicken * 0.01;
+      const furyFactor = furyEnabled ? 0.75 : 1.0;
+      
+      const characteristic = getCharacteristicBonus(document.getElementById('characteristic').value);
+      const atkSpdColor = parseFloat(document.getElementById('atkSpdColor').value) || 0;
+      const guildAtkSpd = parseFloat(document.getElementById('guildAtkSpd').value) || 0;
+      const secretAtkSpd = parseFloat(document.getElementById('secretAtkSpd').value) || 0;
+      const petBonus = getPetGearBonus(selectedPetRank);
+      
+      const baseBuffs = (characteristic.atkSpd || 0) + atkSpdColor + guildAtkSpd + secretAtkSpd + petBonus;
+      const denominator = Math.max(baseInterval * (1 - quickenReduction) * furyFactor, 0.000001);
+      const requiredTotal = 1 - (0.25 / denominator);
+      const requiredFromGearAndRune = Math.max(0, requiredTotal * 100 - baseBuffs);
+      
+      return { required: requiredFromGearAndRune, baseBuffs, total: requiredTotal * 100, baseInterval };
+    }
+
+    function buildWeapon(focus) {
+      const weaponTier = selectedWeaponTier;
+      const stats = STAT_VALUES[weaponTier];
+      const hasPurple = (weaponTier === 'Chaos' || weaponTier === 'Abyss');
+      const normalLineCount = (weaponTier === 'Primal') ? 2 : 3;
+      const lines = [];
+      
+      if (hasPurple) {
+        const purpleVal = (weaponTier === 'Chaos') ? 80 : 120;
+        const purpleStat = focus === 'DPS' ? 'Crit DMG' : 'HP';
+        const purpleValue = focus === 'DPS' ? purpleVal : 58;
+        lines.push({ stat: purpleStat, value: purpleValue, isPurple: true });
+      }
+      
+      const castStat = focus === 'DPS' ? 'Cast Demon Lord' : 'Cast Evasion';
+      lines.push({ stat: castStat, value: 0, isCast: true });
+      
+      for (let i = 0; i < normalLineCount; i++) {
+        if (focus === 'DPS') {
+          const opts = [
+            { stat: 'ATK', value: stats.atk },
+            { stat: 'Crit DMG', value: stats.critDmg },
+            { stat: 'Racial DMG', value: stats.racialDmg }
+          ];
+          lines.push(opts[i % 3]);
+        } else {
+          const opts = [
+            { stat: 'HP', value: stats.hp },
+            { stat: 'DEF', value: stats.def },
+            { stat: 'ATK', value: stats.atk }
+          ];
+          lines.push(opts[i % 3]);
+        }
+      }
+      
+      return lines;
+    }
+
+    function optimize() {
+      const tier = selectedTier;
+      const focus = selectedFocus;
+      const statVals = STAT_VALUES[tier];
+      const hasPurple = tier === 'Chaos' || tier === 'Abyss';
+      const lineCount = tier === 'Primal' ? 3 : 4;
+      
+      const atkSpdReq = calculateRequiredAtkSpd();
+      const runeAtkSpd = parseFloat(document.getElementById('runeAtkSpd').value) || 0;
+      const neededAtkSpdFromGear = Math.max(0, atkSpdReq.required - runeAtkSpd);
+      
+      const runeCrit = parseFloat(document.getElementById('runeCrit').value) || 0;
+      const runeEvasion = parseFloat(document.getElementById('runeEvasion').value) || 0;
+      const guildCrit = parseFloat(document.getElementById('guildCrit').value) || 0;
+      const secretCrit = parseFloat(document.getElementById('secretCrit').value) || 0;
+      const secretEvasion = parseFloat(document.getElementById('secretEvasion').value) || 0;
+      const characteristic = getCharacteristicBonus(document.getElementById('characteristic').value);
+      
+      const totalCritBuffs = runeCrit + guildCrit + secretCrit + (characteristic.crit || 0);
+      const totalEvasionBuffs = runeEvasion + secretEvasion + (characteristic.evasion || 0);
+      
+      const neededCrit = Math.max(0, 50 - totalCritBuffs);
+      const neededEvasion = Math.max(0, 40 - totalEvasionBuffs);
+      const neededDR = focus === 'Tank' ? 100 : 0;
+      
+      const slots = ['Helm', 'Chest', 'Gloves', 'Boots', 'Belt', 'Necklace', 'Ring'];
+      const build = {};
+      
+      let remainingAtkSpd = neededAtkSpdFromGear;
+      let remainingCrit = neededCrit;
+      let remainingEvasion = neededEvasion;
+      let remainingDR = neededDR;
+      
+      const capPriority = focus === 'DPS' ? ['atkSpd', 'crit', 'evasion'] : ['atkSpd', 'evasion', 'dr', 'crit'];
+      
+      slots.forEach(slot => {
+        const lines = [];
+        let usedCapStat = false;
+        
+        const purpleConfig = {
+          "Chaos": {
+            "DPS": { helm: {stat: 'HP', value: 26}, chest: {stat: 'ATK', value: 26}, gloves: {stat: 'ATK', value: 26},
+              boots: {stat: 'ATK', value: 26}, belt: {stat: 'HP', value: 26}, necklace: {stat: 'Crit DMG', value: 40}, ring: {stat: 'Crit DMG', value: 40} },
+            "Tank": { helm: {stat: 'HP', value: 26}, chest: {stat: 'ATK', value: 26}, gloves: {stat: 'ATK', value: 26},
+              boots: {stat: 'ATK', value: 26}, belt: {stat: 'HP', value: 26}, necklace: {stat: 'Crit DMG', value: 40}, ring: {stat: 'Crit DMG', value: 40} }
+          },
+          "Abyss": {
+            "DPS": { helm: {stat: 'HP', value: 29}, chest: {stat: 'ATK', value: 29}, gloves: {stat: 'ATK', value: 29},
+              boots: {stat: 'ATK', value: 29}, belt: {stat: 'HP', value: 29}, necklace: {stat: 'Crit DMG', value: 45}, ring: {stat: 'Crit DMG', value: 45} },
+            "Tank": { helm: {stat: 'HP', value: 29}, chest: {stat: 'ATK', value: 29}, gloves: {stat: 'ATK', value: 29},
+              boots: {stat: 'ATK', value: 29}, belt: {stat: 'HP', value: 29}, necklace: {stat: 'Crit DMG', value: 45}, ring: {stat: 'Crit DMG', value: 45} }
+          }
+        };
+        
+        if (hasPurple) {
+          const purpleData = purpleConfig[tier]?.[focus]?.[slot.toLowerCase()];
+          if (purpleData) {
+            lines.push({ stat: purpleData.stat, value: purpleData.value, isPurple: true });
+          }
+        }
+        
+        for (let i = 0; i < lineCount; i++) {
+          let assigned = false;
+          
+          if (!usedCapStat) {
+            for (const capStat of capPriority) {
+              if (capStat === 'atkSpd' && remainingAtkSpd > statVals.atkSpd * 0.5) {
+                lines.push({ stat: 'ATK SPD', value: statVals.atkSpd, isCap: true });
+                remainingAtkSpd -= statVals.atkSpd;
+                usedCapStat = true;
+                assigned = true;
+                break;
+              } else if (capStat === 'crit' && remainingCrit > statVals.crit * 0.5) {
+                lines.push({ stat: 'Crit Chance', value: statVals.crit, isCap: true });
+                remainingCrit -= statVals.crit;
+                usedCapStat = true;
+                assigned = true;
+                break;
+              } else if (capStat === 'evasion' && remainingEvasion > statVals.evasion * 0.5) {
+                lines.push({ stat: 'Evasion', value: statVals.evasion, isCap: true });
+                remainingEvasion -= statVals.evasion;
+                usedCapStat = true;
+                assigned = true;
+                break;
+              } else if (capStat === 'dr' && remainingDR > statVals.dr * 0.5) {
+                lines.push({ stat: 'DR', value: statVals.dr, isCap: true });
+                remainingDR -= statVals.dr;
+                usedCapStat = true;
+                assigned = true;
+                break;
+              }
+            }
+          }
+          
+          if (!assigned) {
+            if (focus === 'DPS') {
+              const opts = [
+                { stat: 'ATK', value: statVals.atk },
+                { stat: 'Crit DMG', value: statVals.critDmg },
+                { stat: 'Racial DMG', value: statVals.racialDmg }
+              ];
+              lines.push(opts[i % opts.length]);
+            } else {
+              const opts = [
+                { stat: 'HP', value: statVals.hp },
+                { stat: 'DEF', value: statVals.def },
+                { stat: 'ATK', value: statVals.atk }
+              ];
+              lines.push(opts[i % opts.length]);
+            }
+          }
+        }
+        
+        build[slot] = lines;
+      });
+      
+      build.Weapon = buildWeapon(focus);
+      
+      displayResults(build, { atkSpdReq, remainingAtkSpd, remainingCrit, remainingEvasion, remainingDR });
+    }
+
+    function displayResults(build, stats) {
+      let html = '';
+      for (const [slot, lines] of Object.entries(build)) {
+        html += `<div class="gear-slot"><h3>${slot}</h3>`;
+        lines.forEach(line => {
+          if (line.isPurple) {
+            html += `<div class="stat-line purple">${line.stat}: ${line.value}% (Option)</div>`;
+          } else if (line.isCast) {
+            html += `<div class="stat-line cast">${line.stat}</div>`;
+          } else {
+            const className = line.isCap ? 'cap' : '';
+            const displayValue = line.value !== undefined ? line.value.toFixed(1) : '0';
+            html += `<div class="stat-line ${className}">${line.stat}: ${displayValue}%</div>`;
+          }
+        });
+        html += `</div>`;
+      }
+      
+      document.getElementById('buildOutput').innerHTML = html;
+      
+      const atkSpdStatus = stats.remainingAtkSpd <= 0 ? '✓ Capped' : `⚠️ Need ${stats.remainingAtkSpd.toFixed(1)}%`;
+      const critStatus = stats.remainingCrit <= 0 ? '✓ Capped' : `⚠️ Need ${stats.remainingCrit.toFixed(1)}%`;
+      const evasionStatus = stats.remainingEvasion <= 0 ? '✓ Capped' : `⚠️ Need ${stats.remainingEvasion.toFixed(1)}%`;
+      
+      const atkSpdWaste = stats.remainingAtkSpd < 0 ? Math.abs(stats.remainingAtkSpd) : 0;
+      const critWaste = stats.remainingCrit < 0 ? Math.abs(stats.remainingCrit) : 0;
+      const evasionWaste = stats.remainingEvasion < 0 ? Math.abs(stats.remainingEvasion) : 0;
+      const totalWaste = atkSpdWaste + critWaste + evasionWaste;
+      
+      document.getElementById('summary').innerHTML = `
+        <div class="summary-item">
+          <div class="summary-label">ATK SPD (0.25s)</div>
+          <div class="summary-value">${atkSpdStatus}</div>
+          ${atkSpdWaste > 0 ? `<div style="color: #fbbf24; font-size: 0.8rem; margin-top: 5px;">Waste: ${atkSpdWaste.toFixed(1)}%</div>` : ''}
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Crit (50%)</div>
+          <div class="summary-value">${critStatus}</div>
+          ${critWaste > 0 ? `<div style="color: #fbbf24; font-size: 0.8rem; margin-top: 5px;">Waste: ${critWaste.toFixed(1)}%</div>` : ''}
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Evasion (40%)</div>
+          <div class="summary-value">${evasionStatus}</div>
+          ${evasionWaste > 0 ? `<div style="color: #fbbf24; font-size: 0.8rem; margin-top: 5px;">Waste: ${evasionWaste.toFixed(1)}%</div>` : ''}
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Total Waste</div>
+          <div class="summary-value" style="color: ${totalWaste > 5 ? '#fbbf24' : '#6ee7b7'}">${totalWaste.toFixed(1)}%</div>
+        </div>
+      `;
+      
+      document.getElementById('results').classList.add('show');
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+
+</body>
+</html>
