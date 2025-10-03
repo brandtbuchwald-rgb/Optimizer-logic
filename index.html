@@ -975,59 +975,71 @@ body {
     }
 
     function displayResults(build, stats) {
-      let html = '';
-      for (const [slot, lines] of Object.entries(build)) {
-        html += `<div class="gear-slot"><h3>${slot}</h3>`;
-        lines.forEach(line => {
-          if (line.isPurple) {
-            html += `<div class="stat-line purple">${line.stat}: ${line.value}% (Option)</div>`;
-          } else if (line.isCast) {
-            html += `<div class="stat-line cast">${line.stat}</div>`;
-          } else {
-            const className = line.isCap ? 'cap' : '';
-            const displayValue = line.value !== undefined ? line.value.toFixed(1) : '0';
-            html += `<div class="stat-line ${className}">${line.stat}: ${displayValue}%</div>`;
-          }
-        });
-        html += `</div>`;
+  // start gear ring container
+  let html = '<div class="gear-ring">';
+
+  for (const [slot, lines] of Object.entries(build)) {
+    // normalize slot name to lower-case for CSS class targeting
+    const slotClass = `slot slot-${slot.toLowerCase()}`;
+    html += `<div class="${slotClass}"><h3>${slot}</h3>`;
+
+    // loop through stat lines
+    lines.forEach(line => {
+      if (line.isPurple) {
+        html += `<div class="stat-line purple">${line.stat}: ${line.value}% (Option)</div>`;
+      } else if (line.isCast) {
+        html += `<div class="stat-line cast">${line.stat}</div>`;
+      } else {
+        const className = line.isCap ? 'cap' : '';
+        const displayValue = line.value !== undefined ? line.value.toFixed(1) : '0';
+        html += `<div class="stat-line ${className}">${line.stat}: ${displayValue}%</div>`;
       }
-      
-      document.getElementById('buildOutput').innerHTML = html;
-      
-      const atkSpdStatus = stats.remainingAtkSpd <= 0 ? '✓ Capped' : `⚠️ Need ${stats.remainingAtkSpd.toFixed(1)}%`;
-      const critStatus = stats.remainingCrit <= 0 ? '✓ Capped' : `⚠️ Need ${stats.remainingCrit.toFixed(1)}%`;
-      const evasionStatus = stats.remainingEvasion <= 0 ? '✓ Capped' : `⚠️ Need ${stats.remainingEvasion.toFixed(1)}%`;
-      
-      const atkSpdWaste = stats.remainingAtkSpd < 0 ? Math.abs(stats.remainingAtkSpd) : 0;
-      const critWaste = stats.remainingCrit < 0 ? Math.abs(stats.remainingCrit) : 0;
-      const evasionWaste = stats.remainingEvasion < 0 ? Math.abs(stats.remainingEvasion) : 0;
-      const totalWaste = atkSpdWaste + critWaste + evasionWaste;
-      
-      document.getElementById('summary').innerHTML = `
-        <div class="summary-item">
-          <div class="summary-label">ATK SPD (0.25s)</div>
-          <div class="summary-value">${atkSpdStatus}</div>
-          ${atkSpdWaste > 0 ? `<div style="color: #fbbf24; font-size: 0.8rem; margin-top: 5px;">Waste: ${atkSpdWaste.toFixed(1)}%</div>` : ''}
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">Crit (50%)</div>
-          <div class="summary-value">${critStatus}</div>
-          ${critWaste > 0 ? `<div style="color: #fbbf24; font-size: 0.8rem; margin-top: 5px;">Waste: ${critWaste.toFixed(1)}%</div>` : ''}
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">Evasion (40%)</div>
-          <div class="summary-value">${evasionStatus}</div>
-          ${evasionWaste > 0 ? `<div style="color: #fbbf24; font-size: 0.8rem; margin-top: 5px;">Waste: ${evasionWaste.toFixed(1)}%</div>` : ''}
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">Total Waste</div>
-          <div class="summary-value" style="color: ${totalWaste > 5 ? '#fbbf24' : '#6ee7b7'}">${totalWaste.toFixed(1)}%</div>
-        </div>
-      `;
-      
-      document.getElementById('results').classList.add('show');
-      document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+    });
+
+    html += `</div>`;
+  }
+
+  // close gear ring
+  html += '</div>';
+
+  // inject into page
+  document.getElementById('buildOutput').innerHTML = html;
+
+  // --- summary/status stays as before ---
+  const atkSpdStatus = stats.remainingAtkSpd <= 0 ? '✓ Capped' : `⚠️ Need ${stats.remainingAtkSpd.toFixed(1)}%`;
+  const critStatus   = stats.remainingCrit <= 0 ? '✓ Capped' : `⚠️ Need ${stats.remainingCrit.toFixed(1)}%`;
+  const evasionStatus= stats.remainingEvasion <= 0 ? '✓ Capped' : `⚠️ Need ${stats.remainingEvasion.toFixed(1)}%`;
+
+  const atkSpdWaste  = stats.remainingAtkSpd < 0 ? Math.abs(stats.remainingAtkSpd) : 0;
+  const critWaste    = stats.remainingCrit < 0 ? Math.abs(stats.remainingCrit) : 0;
+  const evasionWaste = stats.remainingEvasion < 0 ? Math.abs(stats.remainingEvasion) : 0;
+  const totalWaste   = atkSpdWaste + critWaste + evasionWaste;
+
+  document.getElementById('summary').innerHTML = `
+    <div class="summary-item">
+      <div class="summary-label">ATK SPD (0.25s)</div>
+      <div class="summary-value">${atkSpdStatus}</div>
+      ${atkSpdWaste > 0 ? `<div style="color: #fbbf24; font-size: 0.8rem; margin-top: 5px;">Waste: ${atkSpdWaste.toFixed(1)}%</div>` : ''}
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Crit (50%)</div>
+      <div class="summary-value">${critStatus}</div>
+      ${critWaste > 0 ? `<div style="color: #fbbf24; font-size: 0.8rem; margin-top: 5px;">Waste: ${critWaste.toFixed(1)}%</div>` : ''}
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Evasion (40%)</div>
+      <div class="summary-value">${evasionStatus}</div>
+      ${evasionWaste > 0 ? `<div style="color: #fbbf24; font-size: 0.8rem; margin-top: 5px;">Waste: ${evasionWaste.toFixed(1)}%</div>` : ''}
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Total Waste</div>
+      <div class="summary-value" style="color: ${totalWaste > 5 ? '#fbbf24' : '#6ee7b7'}">${totalWaste.toFixed(1)}%</div>
+    </div>
+  `;
+
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
   </script>
 
 </body>
