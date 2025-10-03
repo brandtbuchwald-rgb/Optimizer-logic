@@ -390,6 +390,53 @@ body {
   from { transform: translateX(-100%); }
   to { transform: translateX(100%); }
 }
+    /* Gear Ring Layout */
+.gear-ring {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,92,246,0.25), transparent 70%);
+  box-shadow: 0 0 40px rgba(139,92,246,0.6);
+}
+
+/* glowing ring background */
+.gear-ring::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 4px solid rgba(139,92,246,0.6);
+  box-shadow: 0 0 30px rgba(139,92,246,0.8), 0 0 60px rgba(192,132,252,0.6);
+}
+
+/* slots positioned around ring */
+.slot {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: rgba(20,20,35,0.8);
+  border: 2px solid rgba(139,92,246,0.5);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #e0e0e0;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(139,92,246,0.4);
+}
+
+/* place each slot */
+.slot-helm { top: -10px; left: 50%; transform: translateX(-50%); }
+.slot-chest { top: 25%; right: -10px; transform: translateY(-50%); }
+.slot-gloves { bottom: 25%; right: -10px; transform: translateY(50%); }
+.slot-boots { bottom: -10px; left: 50%; transform: translateX(-50%); }
+.slot-belt { bottom: 25%; left: -10px; transform: translateY(50%); }
+.slot-ring { top: 25%; left: -10px; transform: translateY(-50%); }
+.slot-necklace { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.slot-weapon { top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.2); }
   </style>
 </head>
 <body>
