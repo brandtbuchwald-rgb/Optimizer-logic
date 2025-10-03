@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EHT Gear Optimizer v4.0</title>
   <style>
+    
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -281,6 +282,114 @@
     }
     .results { display: none; }
     .results.show { display: block; }
+ /* === Dark Glow RPG Theme Overrides === */
+
+/* Global background */
+body {
+  background: radial-gradient(1200px 600px at 50% -20%, rgba(124,58,237,.25), transparent 60%),
+              radial-gradient(900px 500px at 110% 40%, rgba(236,72,153,.15), transparent 60%),
+              linear-gradient(180deg, #0b0b12, #1a0f2e);
+  color: #e4e4f7;
+}
+
+/* Section cards with neon edges */
+.section, .card, .gear-slot, .summary-item {
+  background: rgba(20,20,35,0.65);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 0 18px rgba(139,92,246,0.25), inset 0 0 8px rgba(255,255,255,0.05);
+}
+
+/* Gear slot rings */
+.gear-slot {
+  border-radius: 50%;
+  padding: 20px;
+  position: relative;
+  text-align: center;
+}
+.gear-slot h3 {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a0f2e;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #c4b5fd;
+  text-shadow: 0 0 8px rgba(139,92,246,0.8);
+}
+
+/* Glowing rim effect */
+.gear-slot::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(139,92,246,0.6);
+  box-shadow: 0 0 15px rgba(139,92,246,0.7),
+              0 0 40px rgba(124,58,237,0.5);
+  z-index: -1;
+}
+
+/* Stat lines */
+.stat-line {
+  padding: 4px 0;
+  font-size: 0.85rem;
+}
+.stat-line.purple {
+  color: #c084fc;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(192,132,252,0.8);
+}
+.stat-line.cap {
+  color: #34d399;
+  font-weight: 600;
+  text-shadow: 0 0 6px rgba(52,211,153,0.7);
+}
+.stat-line.cast {
+  color: #fbbf24;
+  font-style: italic;
+  text-shadow: 0 0 8px rgba(251,191,36,0.8);
+}
+
+/* Buttons */
+.btn, .optimize-btn {
+  border: 1px solid rgba(139,92,246,0.6);
+  background: linear-gradient(180deg, rgba(124,58,237,0.3), rgba(88,28,135,0.3));
+  box-shadow: 0 0 12px rgba(139,92,246,0.4);
+  transition: all 0.25s;
+}
+.btn:hover, .optimize-btn:hover {
+  box-shadow: 0 0 18px rgba(236,72,153,0.6), 0 0 40px rgba(139,92,246,0.5);
+  transform: translateY(-2px);
+}
+.btn.active, .optimize-btn:active {
+  background: linear-gradient(180deg, rgba(192,132,252,0.5), rgba(139,92,246,0.4));
+  box-shadow: 0 0 20px rgba(192,132,252,0.8);
+}
+
+/* Summary bars */
+.summary-item {
+  position: relative;
+  overflow: hidden;
+}
+.summary-item .summary-value {
+  font-size: 1.2rem;
+  color: #c4b5fd;
+  text-shadow: 0 0 6px rgba(139,92,246,0.7);
+}
+.summary-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(139,92,246,0.15), transparent 70%);
+  animation: shimmer 3s infinite;
+}
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
   </style>
 </head>
 <body>
